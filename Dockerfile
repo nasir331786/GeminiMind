@@ -1,5 +1,8 @@
 FROM python:3.11-slim
 
+# Create non-root user first
+RUN useradd -m -u 1000 appuser
+
 WORKDIR /app
 
 # Install system dependencies for PyMuPDF
@@ -17,13 +20,15 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-RUN useradd -m -u 1000 appuser
+# Set proper ownership
+RUN chown -R appuser:appuser /app
+
 USER appuser
 
 EXPOSE 7860
 
 CMD ["streamlit", "run", "app.py", \
-     "--server.port=7860", \
-     "--server.address=0.0.0.0", \
-     "--server.enableXsrfProtection=false", \
-     "--server.enableCORS=false"]
+    "--server.port=7860", \
+    "--server.address=0.0.0.0", \
+    "--server.enableXsrfProtection=false", \
+    "--server.enableCORS=false"]
