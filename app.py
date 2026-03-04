@@ -24,33 +24,33 @@ st.set_page_config(
 # --- Custom CSS (ChatGPT-style dark theme) ---
 st.markdown("""
 <style>
-    /* Main background */
-    .stApp { background-color: #212121; color: #ececec; }
-    .stChatMessage { background-color: transparent !important; }
-    /* User message bubble */
-    [data-testid="stChatMessageContent"]:has(> div > p) {
-        background-color: #2f2f2f;
-        border-radius: 12px;
-        padding: 12px 16px;
-    }
-    /* Input box */
-    .stChatInputContainer { background-color: #2f2f2f !important; border-radius: 16px !important; }
-    /* Sidebar */
-    [data-testid="stSidebar"] { background-color: #171717 !important; }
-    /* Buttons */
-    .stButton>button {
-        background-color: #2f2f2f;
-        color: #ececec;
-        border: 1px solid #444;
-        border-radius: 8px;
-        width: 100%;
-    }
-    .stButton>button:hover { background-color: #404040; }
-    /* Hide Streamlit default elements */
-    #MainMenu, footer, header { visibility: hidden; }
-    .stFileUploader { background-color: #2f2f2f; border-radius: 12px; padding: 8px; }
-    h1, h2, h3 { color: #ececec !important; }
-    .stSelectbox > div > div { background-color: #2f2f2f !important; color: #ececec !important; }
+/* Main background */
+.stApp { background-color: #212121; color: #ececec; }
+.stChatMessage { background-color: transparent !important; }
+/* User message bubble */
+[data-testid="stChatMessageContent"]:has(> div > p) {
+    background-color: #2f2f2f;
+    border-radius: 12px;
+    padding: 12px 16px;
+}
+/* Input box */
+.stChatInputContainer { background-color: #2f2f2f !important; border-radius: 16px !important; }
+/* Sidebar */
+[data-testid="stSidebar"] { background-color: #171717 !important; }
+/* Buttons */
+.stButton>button {
+    background-color: #2f2f2f;
+    color: #ececec;
+    border: 1px solid #444;
+    border-radius: 8px;
+    width: 100%;
+}
+.stButton>button:hover { background-color: #404040; }
+/* Hide Streamlit default elements */
+#MainMenu, footer, header { visibility: hidden; }
+.stFileUploader { background-color: #2f2f2f; border-radius: 12px; padding: 8px; }
+h1, h2, h3 { color: #ececec !important; }
+.stSelectbox > div > div { background-color: #2f2f2f !important; color: #ececec !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -85,10 +85,8 @@ def process_uploaded_file(uploaded_file):
     file_type = uploaded_file.type
     name = uploaded_file.name
     size_mb = len(file_bytes) / (1024 * 1024)
-
     if size_mb > MAX_FILE_SIZE_MB:
         return None, None, f"File too large ({size_mb:.1f}MB). Max {MAX_FILE_SIZE_MB}MB."
-
     if file_type in ["image/jpeg", "image/png", "image/webp", "image/gif"]:
         img = Image.open(io.BytesIO(file_bytes))
         return "image", img, name
@@ -147,7 +145,6 @@ with st.sidebar:
         accept_multiple_files=True,
         label_visibility="collapsed"
     )
-
     if uploaded_files:
         st.session_state.attachments = []
         for f in uploaded_files:
@@ -155,9 +152,9 @@ with st.sidebar:
             if ftype:
                 st.session_state.attachments.append({"type": ftype, "data": fdata, "name": fname})
                 if ftype == "image":
-                    st.image(fdata, caption=fname, use_column_width=True)
+                    st.image(fdata, caption=fname, use_container_width=True)
                 else:
-                    st.success(f"📄 {fname}")
+                    st.success(f"\U0001f4c4 {fname}")
             else:
                 st.error(fdata)  # error message
 
@@ -170,31 +167,29 @@ with st.sidebar:
     # Model Info
     st.markdown("### Model")
     st.code(GEMINI_MODEL, language=None)
-    st.markdown(f"🌡️ Temp: `{TEMPERATURE}` | 💬 Tokens: `{MAX_TOKENS}`")
-
+    st.markdown(f"\U0001f321\ufe0f Temp: `{TEMPERATURE}` | \U0001f4ac Tokens: `{MAX_TOKENS}`")
     st.divider()
     st.markdown(f"Built by **{AUTHOR_NAME}**")
-    st.markdown(f"[GitHub]({AUTHOR_GITHUB}) · [LinkedIn]({AUTHOR_LINKEDIN})")
+    st.markdown(f"[GitHub]({AUTHOR_GITHUB}) \u00b7 [LinkedIn]({AUTHOR_LINKEDIN})")
 
 # --- Main Chat Area ---
 if not st.session_state.model:
-    st.error("🔑 GEMINI_API_KEY not set. Please add it in the Hugging Face Space settings under Repository Secrets.")
+    st.error("\U0001f511 GEMINI_API_KEY not set. Please add it in the Hugging Face Space settings under Repository Secrets.")
     st.stop()
 
 # Welcome screen
 if not st.session_state.messages:
     st.markdown("""
-    <div style='text-align:center; padding: 60px 0 20px 0;'>
-        <h1 style='font-size: 2.5rem; font-weight: 700;'>GeminiMind 🤯</h1>
-        <p style='font-size: 1.1rem; color: #aaa;'>Your multimodal AI assistant. Chat with text, images, PDFs & documents.</p>
-    </div>
-    """, unsafe_allow_html=True)
-
+<div style='text-align: center; padding: 60px 20px;'>
+    <h1>GeminiMind \U0001f92f</h1>
+    <p style='color: #888; font-size: 18px;'>Your multimodal AI assistant. Chat with text, images, PDFs &amp; documents.</p>
+</div>
+""", unsafe_allow_html=True)
     cols = st.columns(3)
     suggestions = [
-        ("📚", "Summarize a document", "Can you summarize the uploaded document for me?"),
-        ("🖼️", "Analyze an image", "What's in this image? Describe it in detail."),
-        ("💡", "Explain a concept", "Explain quantum computing in simple terms."),
+        ("\U0001f4da", "Summarize a document", "Can you summarize the uploaded document for me?"),
+        ("\U0001f5bc\ufe0f", "Analyze an image", "What's in this image? Describe it in detail."),
+        ("\U0001f4a1", "Explain a concept", "Explain quantum computing in simple terms."),
     ]
     for col, (icon, title, prompt) in zip(cols, suggestions):
         with col:
@@ -210,7 +205,7 @@ for msg in st.session_state.messages:
             if att["type"] == "image":
                 st.image(att["data"], width=300)
             elif att["type"] == "document":
-                st.info(f"📄 {att['name']}")
+                st.info(f"\U0001f4c4 {att['name']}")
         st.markdown(msg["content"])
 
 # Chat Input
@@ -223,13 +218,12 @@ if prompt := st.chat_input("Message GeminiMind..."):
         "content": prompt,
         "attachments": current_attachments
     })
-
     with st.chat_message("user"):
         for att in current_attachments:
             if att["type"] == "image":
                 st.image(att["data"], width=300)
             elif att["type"] == "document":
-                st.info(f"📄 {att['name']}")
+                st.info(f"\U0001f4c4 {att['name']}")
         st.markdown(prompt)
 
     # Generate response
@@ -247,7 +241,6 @@ if prompt := st.chat_input("Message GeminiMind..."):
                 chat = st.session_state.model.start_chat(history=history)
                 response = chat.send_message(parts)
                 reply = response.text
-
                 st.markdown(reply)
                 st.session_state.messages.append({"role": "assistant", "content": reply, "attachments": []})
 
@@ -255,6 +248,6 @@ if prompt := st.chat_input("Message GeminiMind..."):
                 st.session_state.attachments = []
 
             except Exception as e:
-                error_msg = f"❌ Error: {str(e)}"
+                error_msg = f"\u274c Error: {str(e)}"
                 st.error(error_msg)
                 st.session_state.messages.append({"role": "assistant", "content": error_msg, "attachments": []})
