@@ -4,7 +4,7 @@ APP_TITLE = "GeminiMind"
 APP_ICON = "🤯"
 
 # Gemini Model
-GEMINI_MODEL = "gemini-1.5-flash"
+    GEMINI_MODEL = "gemini-1.5-flash-latest"
 TEMPERATURE = 0.7
 MAX_TOKENS = 8192
 
